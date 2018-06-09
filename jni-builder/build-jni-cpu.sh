@@ -56,12 +56,10 @@ function build_jni_lib() {
 function package {
   cp jni-builder/build.sbt target
   cd target
-  sbt publishLocal
+  sbt java/publishLocal
 }
 
 build_aten_lib
 build_jni_lib
 package
-
-pwd
 
