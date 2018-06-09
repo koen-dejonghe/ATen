@@ -1,15 +1,19 @@
 #!/bin/bash
 
 function build_aten_lib() {
-  rm -rf build
-  rm -rf target
-  mkdir build
-  cd build
-  cmake .. -DCMAKE_INSTALL_PREFIX=../target -DNO_CUDA=true
-  make install
+  if [ ! -d build ] 
+  then
+    mkdir build
+    cd build
+    cmake .. -DCMAKE_INSTALL_PREFIX=../target -DNO_CUDA=true
+    make install
+    cd ..
+  else
+    echo "build directory exists, skipping ATen build..."
+  fi
 }
 
-function build_jni() {
+function build_jni_lib() {
   echo "preprocessing header files"
   cd target
   cp -R include include-swig
@@ -44,9 +48,18 @@ function build_jni() {
     -I include/THS
 
   echo "building dynamic library"
-  cc -dynamiclib -undefined suppress -flat_namespace torch-cpu_wrap.o -o lib/libjnitorch.dylib
+  cc -dynamiclib -undefined suppress -flat_namespace torch-cpu_wrap.o -o lib/libjnitorchcpu.dylib
+
+  cd ..
 }
 
-# build_aten_lib
-build_jni
+function package {
+  cd target
+  
+}
+
+build_aten_lib
+build_jni_lib
+
+pwd
 
