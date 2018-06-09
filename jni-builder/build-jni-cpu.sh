@@ -29,14 +29,14 @@ function build_jni_lib() {
   done
   cd ..
 
-  cp ../swig/torch-cpu.h include-swig
+  cp ../jni-builder/torch-cpu.h include-swig
   cd include-swig
   cc -P -E -I TH -I THNN -I THS torch-cpu.h > torch-cpu-preprocessed.h
 
   echo "swigging"
   cd ..
   mkdir -p java/src/main/java/torch/cpu
-  cp ../swig/torch-cpu.i .
+  cp ../jni-builder/torch-cpu.i .
   swig -java -package torch.cpu -outdir java/src/main/java/torch/cpu torch-cpu.i
 
   echo "compiling swig wrapper"
@@ -54,12 +54,14 @@ function build_jni_lib() {
 }
 
 function package {
+  cp jni-builder/build.sbt target
   cd target
-  
+  sbt publishLocal
 }
 
 build_aten_lib
 build_jni_lib
+package
 
 pwd
 
