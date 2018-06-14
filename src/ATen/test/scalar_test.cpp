@@ -9,6 +9,11 @@
 #include "test_assert.h"
 #include "test_seed.h"
 
+// fix for cygwin - Koen Dejonghe
+#ifndef M_PI
+    #define M_PI 3.14159265358979323846
+#endif
+
 using std::cout;
 using namespace at;
 
