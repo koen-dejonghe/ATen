@@ -48,6 +48,8 @@ function build_jni_lib() {
     -I include/THS
 
   echo "building dynamic library"
+  # does not work, but see https://docs.oracle.com/javase/9/troubleshoot/handle-signals-and-exceptions.htm#JSTGD356
+  # cc -dynamiclib -undefined suppress -flat_namespace torch-cpu_wrap.o -o /Library/Java/JavaVirtualMachines/jdk1.8.0_144.jdk/Contents/Home/jre/lib/libjsig.dylib -o lib/libjnitorchcpu.dylib
   cc -dynamiclib -undefined suppress -flat_namespace torch-cpu_wrap.o -o lib/libjnitorchcpu.dylib
 
   cd ..
@@ -56,7 +58,7 @@ function build_jni_lib() {
 function package {
   cp jni-builder/build.sbt target
   cd target
-  sbt java/publishLocal
+  sbt torch/publishLocal
 }
 
 build_aten_lib
