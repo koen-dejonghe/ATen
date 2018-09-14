@@ -40,9 +40,18 @@ function build_jni_lib() {
   swig -java -package torch.cpu -outdir java/src/main/java/torch/cpu torch-cpu.i
 
   echo "compiling swig wrapper"
-  cc -c torch-cpu_wrap.c \
+  # osx
+  # cc -c torch-cpu_wrap.c \
+    # -I $JAVA_HOME/include \
+    # -I $JAVA_HOME/include/darwin \
+    # -I include/TH \
+    # -I include/THNN \
+    # -I include/THS
+
+  # linux
+  cc -std=c99 -fPIC -static -c torch-cpu_wrap.c \
     -I $JAVA_HOME/include \
-    -I $JAVA_HOME/include/darwin \
+    -I $JAVA_HOME/include/linux \
     -I include/TH \
     -I include/THNN \
     -I include/THS
@@ -50,7 +59,12 @@ function build_jni_lib() {
   echo "building dynamic library"
   # does not work, but see https://docs.oracle.com/javase/9/troubleshoot/handle-signals-and-exceptions.htm#JSTGD356
   # cc -dynamiclib -undefined suppress -flat_namespace torch-cpu_wrap.o -o /Library/Java/JavaVirtualMachines/jdk1.8.0_144.jdk/Contents/Home/jre/lib/libjsig.dylib -o lib/libjnitorchcpu.dylib
-  cc -dynamiclib -undefined suppress -flat_namespace torch-cpu_wrap.o -o lib/libjnitorchcpu.dylib
+
+  # osx
+  # cc -dynamiclib -undefined suppress -flat_namespace torch-cpu_wrap.o -o lib/libjnitorchcpu.dylib
+
+  # linux
+  cc -shared torch-cpu_wrap.o -o lib/libjnitorchcpu.so # -Wl,-rpath,$INSTALL_DIR/lib -L $INSTALL_DIR/lib -lATen
 
   cd ..
 }
